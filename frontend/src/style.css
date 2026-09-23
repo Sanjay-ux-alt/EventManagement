@@ -1,0 +1,684 @@
+/* =================================
+   GENERAL PAGE
+================================= */
+
+* {
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  margin: 0;
+  font-family: Arial, sans-serif;
+  background: #f1f5f9;
+  color: #1e293b;
+}
+
+
+/* =================================
+   NAVIGATION BAR
+================================= */
+
+.navbar {
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 18px 40px;
+  background: #1e293b;
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+}
+
+.logo {
+  color: white;
+  font-size: 24px;
+  font-weight: bold;
+}
+
+.nav-links {
+  display: flex;
+  gap: 25px;
+  align-items: center;
+}
+
+.nav-links a {
+  color: white;
+  text-decoration: none;
+  font-size: 16px;
+  font-weight: 500;
+  transition: 0.3s;
+}
+
+.nav-links a:hover {
+  color: #38bdf8;
+}
+
+
+/* =================================
+   MAIN CONTAINER
+================================= */
+
+.container {
+  width: 90%;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 40px 0;
+}
+
+
+/* =================================
+   HEADINGS
+================================= */
+
+h1 {
+  text-align: center;
+  font-size: 36px;
+  margin-bottom: 10px;
+  color: #0f172a;
+}
+
+.container > p {
+  text-align: center;
+  font-size: 18px;
+  color: #64748b;
+  margin-bottom: 35px;
+}
+
+h2 {
+  margin-top: 40px;
+  margin-bottom: 20px;
+  color: #0f172a;
+}
+
+
+/* =================================
+   SEARCH BOX
+================================= */
+
+.search-box {
+  display: flex;
+  justify-content: center;
+  margin: 30px 0;
+}
+
+.search-box input {
+  width: 100%;
+  max-width: 600px;
+  padding: 15px 18px;
+  border: 1px solid #cbd5e1;
+  border-radius: 10px;
+  font-size: 16px;
+  outline: none;
+  background: white;
+}
+
+.search-box input:focus {
+  border-color: #38bdf8;
+}
+
+
+/* =================================
+   EVENT CONTAINER
+================================= */
+
+#eventContainer {
+  display: grid;
+  grid-template-columns: repeat(
+    auto-fit,
+    minmax(280px, 1fr)
+  );
+  gap: 25px;
+}
+
+
+/* =================================
+   EVENT CARD
+================================= */
+
+.event-card {
+  background: white;
+  padding: 20px;
+  border-radius: 15px;
+  box-shadow: 0 5px 20px rgba(0, 0, 0, 0.08);
+  transition: 0.3s;
+}
+
+.event-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.12);
+}
+
+.event-card h3 {
+  font-size: 22px;
+  margin: 10px 0;
+  color: #0f172a;
+}
+
+.event-card p {
+  color: #475569;
+  line-height: 1.6;
+}
+
+
+/* =================================
+   EVENT IMAGE
+================================= */
+
+.event-image {
+  width: 100%;
+  max-width: 450px;
+  height: 250px;
+  object-fit: cover;
+  border-radius: 12px;
+  margin-bottom: 20px;
+}
+
+
+/* =================================
+   EVENT BUTTONS
+================================= */
+
+.event-buttons {
+  display: flex;
+  gap: 10px;
+  margin-top: 15px;
+}
+
+.viewDetailsBtn,
+.registerBtn {
+  flex: 1;
+  padding: 13px;
+  border: none;
+  border-radius: 8px;
+  color: white;
+  font-size: 15px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: 0.3s;
+}
+
+.viewDetailsBtn {
+  background: #475569;
+}
+
+.viewDetailsBtn:hover {
+  background: #334155;
+}
+
+.registerBtn {
+  background: #2563eb;
+}
+
+.registerBtn:hover {
+  background: #1d4ed8;
+}
+
+
+/* =================================
+   EVENT DETAILS MODAL
+================================= */
+
+.event-modal {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(15, 23, 42, 0.75);
+  z-index: 2000;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+}
+
+.event-modal-content {
+  position: relative;
+  width: 100%;
+  max-width: 650px;
+  max-height: 90vh;
+  overflow-y: auto;
+  padding: 30px;
+  background: white;
+  border-radius: 18px;
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.25);
+}
+
+.close-modal {
+  position: absolute;
+  top: 12px;
+  right: 18px;
+  width: 38px;
+  height: 38px;
+  border: none;
+  border-radius: 50%;
+  background: #e2e8f0;
+  color: #0f172a;
+  font-size: 28px;
+  line-height: 1;
+  cursor: pointer;
+}
+
+.close-modal:hover {
+  background: #cbd5e1;
+}
+
+.modal-event-image {
+  width: 100%;
+  height: 280px;
+  object-fit: cover;
+  border-radius: 12px;
+  margin-bottom: 20px;
+}
+
+.event-modal-content h2 {
+  margin-top: 0;
+  font-size: 28px;
+}
+
+.event-modal-content p {
+  color: #475569;
+  line-height: 1.7;
+}
+
+.event-modal-content .registerBtn {
+  width: 100%;
+  margin-top: 15px;
+}
+
+
+/* =================================
+   REGISTRATION FORM
+================================= */
+
+.registration-form {
+  max-width: 600px;
+  margin: 50px auto;
+  padding: 30px;
+  background: white;
+  border-radius: 15px;
+  box-shadow: 0 5px 20px rgba(0, 0, 0, 0.08);
+}
+
+.registration-form h2 {
+  margin-top: 0;
+  text-align: center;
+}
+
+.registration-form input {
+  width: 100%;
+  padding: 14px;
+  margin: 8px 0;
+  border: 1px solid #cbd5e1;
+  border-radius: 8px;
+  font-size: 15px;
+  outline: none;
+}
+
+.registration-form input:focus {
+  border-color: #2563eb;
+}
+
+#submitBtn {
+  width: 100%;
+  padding: 14px;
+  margin-top: 15px;
+  border: none;
+  border-radius: 8px;
+  background: #16a34a;
+  color: white;
+  font-size: 16px;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+#submitBtn:hover {
+  background: #15803d;
+}
+
+#message {
+  text-align: center;
+  margin-top: 15px;
+  font-weight: bold;
+}
+
+
+/* =================================
+   REGISTRATION HISTORY
+================================= */
+
+.registration-history {
+  margin-top: 60px;
+}
+
+#registrationList {
+  display: grid;
+  grid-template-columns: repeat(
+    auto-fit,
+    minmax(280px, 1fr)
+  );
+  gap: 20px;
+}
+
+.registration-card {
+  background: white;
+  padding: 20px;
+  border-radius: 12px;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.07);
+}
+
+.registration-card h3 {
+  margin-top: 0;
+  color: #2563eb;
+}
+
+.registration-card p {
+  color: #475569;
+}
+
+
+/* =================================
+   FOOTER
+================================= */
+
+.footer {
+  width: 100%;
+  margin-top: 60px;
+  padding: 25px 20px;
+  background: #1e293b;
+  color: white;
+  text-align: center;
+}
+
+.footer p {
+  margin: 5px 0;
+  font-size: 14px;
+}
+
+
+/* =================================
+   MOBILE NAVIGATION
+================================= */
+
+@media (max-width: 768px) {
+
+  .navbar {
+    flex-direction: column;
+    gap: 15px;
+    padding: 18px 20px;
+  }
+
+  .nav-links {
+    gap: 15px;
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+
+  .nav-links a {
+    font-size: 14px;
+  }
+
+  h1 {
+    font-size: 28px;
+  }
+
+  .container {
+    width: 92%;
+  }
+
+  .event-image {
+    height: 200px;
+  }
+
+  .event-buttons {
+    flex-direction: column;
+  }
+
+  .event-modal-content {
+    padding: 25px 20px;
+  }
+
+  .modal-event-image {
+    height: 220px;
+  }
+
+}
+
+
+/* =================================
+   SMALL MOBILE DEVICES
+================================= */
+
+@media (max-width: 480px) {
+
+  .logo {
+    font-size: 20px;
+  }
+
+  .nav-links {
+    gap: 10px;
+  }
+
+  .nav-links a {
+    font-size: 13px;
+  }
+
+  h1 {
+    font-size: 24px;
+  }
+
+  .registration-form {
+    padding: 20px;
+  }
+
+  .event-modal {
+    padding: 10px;
+  }
+
+  .event-modal-content {
+    padding: 25px 15px;
+  }
+
+  .modal-event-image {
+    height: 180px;
+  }
+
+  .footer {
+    padding: 20px 10px;
+  }
+
+}
+
+/* =========================================
+   UPI QR PAYMENT
+========================================= */
+
+.upi-payment-section {
+    margin-top: 25px;
+    padding: 20px;
+    border-radius: 12px;
+    background: #f8fafc;
+    border: 1px solid #e2e8f0;
+    text-align: center;
+}
+
+.upi-payment-section h3 {
+    margin-bottom: 8px;
+}
+
+.upi-info {
+    color: #64748b;
+    font-size: 14px;
+    line-height: 1.5;
+}
+
+.upi-divider {
+    margin: 15px 0;
+    border-top: 1px solid #cbd5e1;
+    position: relative;
+}
+
+.upi-divider span {
+    position: relative;
+    top: -12px;
+    background: #f8fafc;
+    padding: 0 12px;
+    color: #64748b;
+    font-weight: bold;
+}
+
+#upiQrContainer {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin: 20px 0;
+    min-height: 270px;
+}
+
+#upiQrContainer canvas {
+    background: white;
+    padding: 10px;
+    border-radius: 10px;
+    border: 1px solid #ddd;
+}
+
+.upi-amount {
+    font-size: 20px;
+    font-weight: bold;
+    margin: 10px 0;
+}
+
+.upi-note {
+    color: #64748b;
+    font-size: 13px;
+    margin: 10px 0 15px;
+}
+
+.upi-copy-button {
+    width: 100%;
+    padding: 12px;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    background: #2563eb;
+    color: white;
+    font-size: 15px;
+}
+
+.upi-copy-button:hover {
+    opacity: 0.9;
+}
+
+.upi-message {
+    color: #16a34a;
+    font-weight: bold;
+    margin-top: 10px;
+}
+/* =========================================
+   UPI PAYMENT SECTION
+========================================= */
+
+.upi-payment-section {
+    margin-top: 25px;
+    padding: 20px;
+    border-radius: 12px;
+    background: #f8fafc;
+    border: 1px solid #e2e8f0;
+    text-align: center;
+}
+
+.upi-payment-section h3 {
+    margin-bottom: 8px;
+}
+
+.upi-info {
+    color: #64748b;
+    font-size: 14px;
+    line-height: 1.5;
+}
+
+.upi-divider {
+    margin: 15px 0 20px;
+    border-top: 1px solid #cbd5e1;
+    position: relative;
+}
+
+.upi-divider span {
+    position: relative;
+    top: -12px;
+    background: #f8fafc;
+    padding: 0 12px;
+    color: #64748b;
+}
+
+#upiQrContainer {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 270px;
+    margin: 15px 0;
+}
+
+#upiQrContainer canvas {
+    background: white;
+    padding: 10px;
+    border-radius: 10px;
+    border: 1px solid #ddd;
+}
+
+.upi-amount {
+    font-size: 20px;
+    font-weight: bold;
+    margin: 10px 0;
+}
+
+.upi-id-display {
+    font-size: 14px;
+    color: #475569;
+    word-break: break-all;
+}
+
+.upi-copy-button {
+    width: 100%;
+    padding: 12px;
+    margin-top: 8px;
+    border: 1px solid #cbd5e1;
+    border-radius: 8px;
+    cursor: pointer;
+    background: white;
+    color: #334155;
+    font-size: 15px;
+}
+
+.upi-copy-button:hover {
+    background: #f1f5f9;
+}
+
+.upi-paid-button {
+    width: 100%;
+    padding: 13px;
+    margin-top: 12px;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    background: #16a34a;
+    color: white;
+    font-size: 16px;
+    font-weight: bold;
+}
+
+.upi-paid-button:hover {
+    opacity: 0.9;
+}
+
+.upi-message {
+    margin-top: 12px;
+    font-weight: 600;
+}
+
+.payment-message {
+    margin-top: 15px;
+    font-weight: 600;
+}
