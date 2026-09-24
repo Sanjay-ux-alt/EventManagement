@@ -1,7 +1,7 @@
 import './style.css';
 import QRCode from 'qrcode';
 
-const API_URL = 'http://localhost:5000';
+const API_URL = 'https://eventmanagement-backend-8inb.onrender.com';
 
 /*
 ==================================================

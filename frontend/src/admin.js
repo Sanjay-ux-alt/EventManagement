@@ -1,6 +1,6 @@
 import './style.css';
 
-const API_URL = 'http://localhost:5000';
+const API_URL = 'https://eventmanagement-backend-8inb.onrender.com';
 
 let events = [];
 let editingEventId = null;
