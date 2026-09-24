@@ -10,13 +10,50 @@ require("dotenv").config();
 
 const app = express();
 
-app.use(cors());
+
+// =====================================================
+// MIDDLEWARE
+// =====================================================
+
+app.use(
+    cors({
+        origin: [
+            "http://localhost:5173",
+            "http://localhost:3000",
+            "https://onlineeventmanagement02.netlify.app"
+        ],
+        methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+        allowedHeaders: ["Content-Type", "Authorization"]
+    })
+);
+
 app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
 
 
-// =========================
+// =====================================================
+// ENVIRONMENT VARIABLES CHECK
+// =====================================================
+
+if (!process.env.MONGO_URI) {
+    console.error("ERROR: MONGO_URI is not defined.");
+    process.exit(1);
+}
+
+if (!process.env.RAZORPAY_KEY_ID) {
+    console.error("ERROR: RAZORPAY_KEY_ID is not defined.");
+    process.exit(1);
+}
+
+if (!process.env.RAZORPAY_KEY_SECRET) {
+    console.error("ERROR: RAZORPAY_KEY_SECRET is not defined.");
+    process.exit(1);
+}
+
+
+// =====================================================
 // RAZORPAY
-// =========================
+// =====================================================
 
 const razorpay = new Razorpay({
     key_id: process.env.RAZORPAY_KEY_ID,
@@ -24,18 +61,29 @@ const razorpay = new Razorpay({
 });
 
 
-// =========================
-// HOME
-// =========================
+// =====================================================
+// HOME / HEALTH CHECK
+// =====================================================
 
 app.get("/", (req, res) => {
-    res.send("Event Management Server is Running!");
+    res.json({
+        success: true,
+        message: "Event Management Server is Running!"
+    });
 });
 
 
-// =========================
+app.get("/api/health", (req, res) => {
+    res.json({
+        success: true,
+        message: "Backend is working successfully"
+    });
+});
+
+
+// =====================================================
 // ADD EVENT
-// =========================
+// =====================================================
 
 app.post("/api/events", async (req, res) => {
 
@@ -43,12 +91,13 @@ app.post("/api/events", async (req, res) => {
 
         const event = new Event(req.body);
 
-        const savedEvent =
-            await event.save();
+        const savedEvent = await event.save();
 
         res.status(201).json(savedEvent);
 
     } catch (error) {
+
+        console.error("Create event error:", error);
 
         res.status(500).json({
             message: "Failed to create event",
@@ -60,20 +109,21 @@ app.post("/api/events", async (req, res) => {
 });
 
 
-// =========================
+// =====================================================
 // GET ALL EVENTS
-// =========================
+// =====================================================
 
 app.get("/api/events", async (req, res) => {
 
     try {
 
-        const events =
-            await Event.find();
+        const events = await Event.find();
 
         res.json(events);
 
     } catch (error) {
+
+        console.error("Fetch events error:", error);
 
         res.status(500).json({
             message: "Failed to fetch events",
@@ -85,22 +135,22 @@ app.get("/api/events", async (req, res) => {
 });
 
 
-// =========================
+// =====================================================
 // UPDATE EVENT
-// =========================
+// =====================================================
 
 app.put("/api/events/:id", async (req, res) => {
 
     try {
 
-        const updatedEvent =
-            await Event.findByIdAndUpdate(
-                req.params.id,
-                req.body,
-                {
-                    new: true
-                }
-            );
+        const updatedEvent = await Event.findByIdAndUpdate(
+            req.params.id,
+            req.body,
+            {
+                new: true,
+                runValidators: true
+            }
+        );
 
         if (!updatedEvent) {
 
@@ -114,6 +164,8 @@ app.put("/api/events/:id", async (req, res) => {
 
     } catch (error) {
 
+        console.error("Update event error:", error);
+
         res.status(500).json({
             message: "Failed to update event",
             error: error.message
@@ -124,18 +176,17 @@ app.put("/api/events/:id", async (req, res) => {
 });
 
 
-// =========================
+// =====================================================
 // DELETE EVENT
-// =========================
+// =====================================================
 
 app.delete("/api/events/:id", async (req, res) => {
 
     try {
 
-        const deletedEvent =
-            await Event.findByIdAndDelete(
-                req.params.id
-            );
+        const deletedEvent = await Event.findByIdAndDelete(
+            req.params.id
+        );
 
         if (!deletedEvent) {
 
@@ -152,6 +203,8 @@ app.delete("/api/events/:id", async (req, res) => {
 
     } catch (error) {
 
+        console.error("Delete event error:", error);
+
         res.status(500).json({
             message: "Failed to delete event",
             error: error.message
@@ -162,9 +215,9 @@ app.delete("/api/events/:id", async (req, res) => {
 });
 
 
-// =========================
+// =====================================================
 // CREATE RAZORPAY ORDER
-// =========================
+// =====================================================
 
 app.post("/api/payment/create-order", async (req, res) => {
 
@@ -172,9 +225,10 @@ app.post("/api/payment/create-order", async (req, res) => {
 
         const { amount } = req.body;
 
-        if (!amount || amount <= 0) {
+        if (!amount || Number(amount) <= 0) {
 
             return res.status(400).json({
+                success: false,
                 message: "Invalid payment amount"
             });
 
@@ -186,12 +240,11 @@ app.post("/api/payment/create-order", async (req, res) => {
             receipt: "event_" + Date.now()
         };
 
-        const order =
-            await razorpay.orders.create(options);
+        const order = await razorpay.orders.create(options);
 
         res.json({
             success: true,
-            order
+            order: order
         });
 
     } catch (error) {
@@ -202,6 +255,7 @@ app.post("/api/payment/create-order", async (req, res) => {
         );
 
         res.status(500).json({
+            success: false,
             message: "Failed to create payment order",
             error: error.message
         });
@@ -211,9 +265,9 @@ app.post("/api/payment/create-order", async (req, res) => {
 });
 
 
-// =========================
+// =====================================================
 // VERIFY RAZORPAY PAYMENT
-// =========================
+// =====================================================
 
 app.post("/api/payment/verify", async (req, res) => {
 
@@ -225,10 +279,32 @@ app.post("/api/payment/verify", async (req, res) => {
             razorpay_signature
         } = req.body;
 
+
+        // Check required values
+
+        if (
+            !razorpay_order_id ||
+            !razorpay_payment_id ||
+            !razorpay_signature
+        ) {
+
+            return res.status(400).json({
+                success: false,
+                message: "Missing payment verification details"
+            });
+
+        }
+
+
+        // Create signature body
+
         const body =
             razorpay_order_id +
             "|" +
             razorpay_payment_id;
+
+
+        // Generate expected signature
 
         const expectedSignature =
             crypto
@@ -236,24 +312,26 @@ app.post("/api/payment/verify", async (req, res) => {
                     "sha256",
                     process.env.RAZORPAY_KEY_SECRET
                 )
-                .update(body.toString())
+                .update(body)
                 .digest("hex");
+
+
+        // Compare signatures
 
         if (expectedSignature === razorpay_signature) {
 
-            res.json({
+            return res.json({
                 success: true,
                 message: "Payment verified successfully"
             });
 
-        } else {
-
-            res.status(400).json({
-                success: false,
-                message: "Payment verification failed"
-            });
-
         }
+
+
+        return res.status(400).json({
+            success: false,
+            message: "Payment verification failed"
+        });
 
     } catch (error) {
 
@@ -273,86 +351,118 @@ app.post("/api/payment/verify", async (req, res) => {
 });
 
 
-// =========================
+// =====================================================
 // ADD REGISTRATION
-// =========================
+// =====================================================
 
-app.post(
-    "/api/registrations",
-    async (req, res) => {
+app.post("/api/registrations", async (req, res) => {
 
-        try {
+    try {
 
-            const registration =
-                new Registration(req.body);
+        const registration =
+            new Registration(req.body);
 
-            const savedRegistration =
-                await registration.save();
+        const savedRegistration =
+            await registration.save();
 
-            res.status(201).json({
+        res.status(201).json({
 
-                message:
-                    "Registration successful",
+            message: "Registration successful",
 
-                registration:
-                    savedRegistration
+            registration: savedRegistration
 
-            });
+        });
 
-        } catch (error) {
+    } catch (error) {
 
-            res.status(500).json({
+        console.error(
+            "Registration error:",
+            error
+        );
 
-                message:
-                    "Registration failed",
+        res.status(500).json({
 
-                error:
-                    error.message
+            message: "Registration failed",
 
-            });
+            error: error.message
 
-        }
+        });
 
     }
-);
+
+});
 
 
-// =========================
+// =====================================================
 // GET REGISTRATIONS
-// =========================
+// =====================================================
 
-app.get(
-    "/api/registrations",
-    async (req, res) => {
+app.get("/api/registrations", async (req, res) => {
 
-        try {
+    try {
 
-            const registrations =
-                await Registration.find();
+        const registrations =
+            await Registration.find();
 
-            res.json(registrations);
+        res.json(registrations);
 
-        } catch (error) {
+    } catch (error) {
 
-            res.status(500).json({
+        console.error(
+            "Fetch registrations error:",
+            error
+        );
 
-                message:
-                    "Failed to fetch registrations",
+        res.status(500).json({
 
-                error:
-                    error.message
+            message: "Failed to fetch registrations",
 
-            });
+            error: error.message
 
-        }
+        });
 
     }
-);
+
+});
 
 
-// =========================
+// =====================================================
+// 404 ROUTE
+// =====================================================
+
+app.use((req, res) => {
+
+    res.status(404).json({
+        success: false,
+        message: "API route not found"
+    });
+
+});
+
+
+// =====================================================
+// GLOBAL ERROR HANDLER
+// =====================================================
+
+app.use((error, req, res, next) => {
+
+    console.error(
+        "Server error:",
+        error
+    );
+
+    res.status(500).json({
+        success: false,
+        message: "Internal server error",
+        error: error.message
+    });
+
+});
+
+
+// =====================================================
 // MONGODB CONNECTION
-// =========================
+// =====================================================
 
 mongoose
     .connect(process.env.MONGO_URI)
@@ -363,13 +473,21 @@ mongoose
             "MongoDB connected successfully"
         );
 
+
+        // =================================================
+        // START SERVER
+        // =================================================
+
+        const PORT =
+            process.env.PORT || 5000;
+
         app.listen(
-            process.env.PORT || 5000,
+            PORT,
+            "0.0.0.0",
             () => {
 
                 console.log(
-                    "Server running on port " +
-                    (process.env.PORT || 5000)
+                    `Server running on port ${PORT}`
                 );
 
             }
@@ -380,8 +498,13 @@ mongoose
     .catch((error) => {
 
         console.error(
-            "MongoDB connection failed:",
+            "MongoDB connection failed:"
+        );
+
+        console.error(
             error.message
         );
+
+        process.exit(1);
 
     });
