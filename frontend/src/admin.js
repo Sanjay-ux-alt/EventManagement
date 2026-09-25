@@ -5,7 +5,6 @@ const API_URL = 'https://eventmanagement-backend-8inb.onrender.com';
 let events = [];
 let editingEventId = null;
 
-
 /* ================================
    ADMIN PAGE
 ================================ */
@@ -115,6 +114,7 @@ document.querySelector('#app').innerHTML = `
                 type="number"
                 id="price"
                 placeholder="Event Price"
+                min="0"
             >
 
 
@@ -135,7 +135,7 @@ document.querySelector('#app').innerHTML = `
 
             <button
                 id="cancelEditBtn"
-                style="display:none;"
+                style="display: none;"
             >
                 Cancel Edit
             </button>
@@ -241,7 +241,7 @@ async function loadEvents() {
 
     } catch (error) {
 
-        console.error(error);
+        console.error('Load events error:', error);
 
         eventContainer.innerHTML = `
             <p>
@@ -468,6 +468,7 @@ saveEventBtn.addEventListener(
 
             }
 
+
             /* ADD */
 
             else {
@@ -517,7 +518,7 @@ saveEventBtn.addEventListener(
 
         } catch (error) {
 
-            console.error(error);
+            console.error('Save event error:', error);
 
             message.textContent =
                 '❌ ' + error.message;
@@ -648,7 +649,7 @@ window.deleteEvent = async function (id) {
 
     } catch (error) {
 
-        console.error(error);
+        console.error('Delete event error:', error);
 
         message.textContent =
             '❌ ' + error.message;
@@ -702,6 +703,8 @@ function resetForm() {
     priceInput.value = '';
 
     imageInput.value = '';
+
+    message.textContent = '';
 
 }
 
